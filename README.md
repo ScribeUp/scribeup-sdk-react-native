@@ -16,8 +16,11 @@ Latest Version
 ---
 
 ## Quick Start
+To initialize the ScribeUp Experience, an authenticated URL will need to be generated first. Your server can generate the url by sending a POST request to the `/v1/auth/users/init` endpoint. DO NOT ever send this request from the client side and publicly expose your API keys.
 
-For details on completing authentication and generating a valid URL, please visit [ScribeUp Documentation](https://docs.scribeup.io).
+The view url returned is valid for 5 minutes, after which it expires and can no longer be used.
+
+For details on completing authentication and generating a valid authenticated URL, please visit [ScribeUp Documentation](https://docs.scribeup.io).
 
 ```jsx
 import { SubscriptionManager } from '@ScribeUp/react-native-scribeup-sdk';
@@ -30,7 +33,7 @@ import { SubscriptionManager } from '@ScribeUp/react-native-scribeup-sdk';
 />
 ```
 
-The `onExit` callback will be invoked when the user closes the subscription manager or an error occurs.
+The `onExit` callback is invoked when the user exits the subscription manager—either intentionally or as a result of an error.
 
 ---
 
@@ -56,6 +59,7 @@ const authenticatedUrl = "...";
 <SubscriptionManager
   visible={showSDK}
   url={authenticatedUrl}
+  productName="Subscription360"
   onExit={(error) => console.log('Exited', error)}
 />
 
