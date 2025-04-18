@@ -23,7 +23,7 @@ The view url returned is valid for 5 minutes, after which it expires and can no 
 For details on completing authentication and generating a valid authenticated URL, please visit [ScribeUp Documentation](https://docs.scribeup.io).
 
 ```jsx
-import { SubscriptionManager } from '@ScribeUp/react-native-scribeup-sdk';
+import { SubscriptionManager } from '@ScribeUp/scribeup-sdk-react-native';
 
 <SubscriptionManager
   visible={showSDK}
