@@ -1,55 +1,48 @@
-import React from 'react';
-import { Modal, Platform, StyleSheet, View } from 'react-native';
-import WebView from 'react-native-webview';
+import React, { useEffect } from 'react';
+import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
+
+const { RNScribeupSDK } = NativeModules;
 
 export interface SubscriptionManagerProps {
   visible: boolean;
   url: string;
   productName?: string;
-  onExit?: (error?: { code: number; message: string }) => void;
+  onExit?: (error?: SubscriptionManagerError) => void;
+}
+
+export interface SubscriptionManagerError {
+  code: number;
+  message: string;
 }
 
 export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
   visible,
   url,
-  productName = 'Subscription Manager',
+  productName,
   onExit,
 }) => {
-  const handleNavigationStateChange = (navState: any) => {
-    // Handle navigation state changes if needed
-    if (navState.url !== url && navState.url.includes('exit')) {
-      onExit?.();
-    }
-  };
+  useEffect(() => {
+    if (!visible) return;
 
-  return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={() => onExit?.()}
-    >
-      <View style={styles.container}>
-        <WebView
-          source={{ uri: url }}
-          style={styles.webview}
-          onNavigationStateChange={handleNavigationStateChange}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          scalesPageToFit={true}
-        />
-      </View>
-    </Modal>
-  );
-};
+    const eventEmitter = new NativeEventEmitter(RNScribeupSDK);
+    const subscription = eventEmitter.addListener('onExit', (event) => {
+      onExit?.(event?.error);
+    });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  webview: {
-    flex: 1,
-  },
-}); 
+    RNScribeupSDK.present({
+      url,
+      productName,
+    }).catch((error: any) => {
+      onExit?.({
+        code: error.code || -1,
+        message: error.message || 'Unknown error occurred',
+      });
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [visible, url, productName, onExit]);
+
+  return null;
+}; 

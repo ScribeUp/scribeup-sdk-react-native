@@ -1,71 +1,127 @@
-# ScribeUpSDK for React Native
+# @scribeup/react-native-scribeup
 
----
+React Native wrapper for the ScribeUp SDK, providing subscription management capabilities for iOS and Android.
 
 ## Installation
 
-```bash
-npm install git+https://github.com/ScribeUp/scribeup-sdk-react-native.git#0.0.1
+```sh
+npm install @scribeup/react-native-scribeup
+# or
+yarn add @scribeup/react-native-scribeup
 ```
 
-Latest Version
-```
-0.0.1
-```
+### iOS
 
----
-
-## Quick Start
-To initialize the ScribeUp Experience, an authenticated URL will need to be generated first. Your server can generate the url by sending a POST request to the `/v1/auth/users/init` endpoint. DO NOT ever send this request from the client side and publicly expose your API keys.
-
-The view url returned is valid for 5 minutes, after which it expires and can no longer be used.
-
-For details on completing authentication and generating a valid authenticated URL, please visit [ScribeUp Documentation](https://docs.scribeup.io).
-
-```jsx
-import { SubscriptionManager } from '@ScribeUp/scribeup-sdk-react-native';
-
-<SubscriptionManager
-  visible={showSDK}
-  url={authenticatedUrl}
-  productName={productName || undefined}
-  onExit={onExit}
-/>
+1. Add the following to your `Podfile`:
+```ruby
+pod 'RNScribeupSDK', :path => '../node_modules/@scribeup/react-native-scribeup'
 ```
 
-The `onExit` callback is invoked when the user exits the subscription manager—either intentionally or as a result of an error.
-
----
-
-## Component Props
-
-| Prop          | Type                              | Required | Description                                          |
-| ------------- | --------------------------------- | -------- | ---------------------------------------------------- |
-| `visible`     | `boolean`                         | ✔️       | Show or hide the subscription manager modal.         |
-| `url`         | `string`                          | ✔️       | The authenticated URL to load in the WebView.        |
-| `productName` | `string`                          |          | Optional header title (default: “Subscription Manager”). |
-| `onExit`      | `(error?: { code: number; message: string }) => void` |        | Called when user exits or an error occurs.           |
-
----
-
-## Example
-
-To launch your subscription manager:
-
-```js
-const [showSDK, setShowSDK] = useState(false);
-const authenticatedUrl = "...";
-
-<SubscriptionManager
-  visible={showSDK}
-  url={authenticatedUrl}
-  productName="Subscription360"
-  onExit={(error) => console.log('Exited', error)}
-/>
-
-setShowSDK(true);
+2. Run pod install:
+```sh
+cd ios && pod install
 ```
 
+### Android
+
+1. Add the following to your `android/settings.gradle`:
+```gradle
+include ':react-native-scribeup'
+project(':react-native-scribeup').projectDir = new File(rootProject.projectDir, '../node_modules/@scribeup/react-native-scribeup/android')
+```
+
+2. Add the following to your `android/app/build.gradle`:
+```gradle
+dependencies {
+    implementation project(':react-native-scribeup')
+}
+```
+
+## Usage
+
+```typescript
+import ScribeupSDK from '@scribeup/react-native-scribeup';
+
+// Present the subscription manager
+try {
+  await ScribeupSDK.present({
+    url: 'https://example.com/subscriptions',
+    productName: 'My Subscription Manager' // optional
+  });
+} catch (error) {
+  console.error('Error:', error);
+}
+
+// Listen for exit events
+const removeListener = ScribeupSDK.addOnExitListener((error) => {
+  if (error) {
+    console.error('Error:', error.message);
+  } else {
+    console.log('Subscription manager closed successfully');
+  }
+});
+
+// Remove listener when done
+removeListener();
+```
+
+## API Reference
+
+### `present(options: SubscriptionManagerOptions): Promise<void>`
+
+Presents the subscription manager UI.
+
+#### Options
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| url | string | Yes | The URL to load in the subscription manager |
+| productName | string | No | The title to display in the header (defaults to "Subscription Manager") |
+
+### `addOnExitListener(callback: (error?: SubscriptionManagerError) => void): () => void`
+
+Adds a listener for the exit event. Returns a function to remove the listener.
+
+#### Error Object
+
+```typescript
+interface SubscriptionManagerError {
+  code: number;
+  message: string;
+}
+```
+
+## Development
+
+1. Clone the repository:
+```sh
+git clone https://github.com/scribeup/react-native-scribeup.git
+cd react-native-scribeup
+```
+
+2. Install dependencies:
+```sh
+yarn install
+```
+
+3. Build the TypeScript files:
+```sh
+yarn prepare
+```
+
+4. Link the package to your example app:
+```sh
+yarn bootstrap
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
-ScribeUpSDK is released under the MIT license. See the LICENSE file for details.
+
+MIT

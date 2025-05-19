@@ -4,6 +4,12 @@ def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
+def getNpmVersion() {
+    def inputFile = new File("$rootDir/../package.json")
+    def packageJson = new groovy.json.JsonSlurper().parseText(inputFile.text)
+    return packageJson.sdkVersions.android
+}
+
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 33)
     buildToolsVersion safeExtGet('buildToolsVersion', '33.0.0')
@@ -14,9 +20,26 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.scribeup:scribeup-sdk:1.0.0'  // Update this version to match your published Android SDK version
+    implementation "io.scribeup:scribeupsdk:${getNpmVersion()}"  // Using version from package.json
 } 

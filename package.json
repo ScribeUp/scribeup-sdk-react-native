@@ -1,31 +1,85 @@
 {
-  "name": "@ScribeUp/scribeup-sdk-react-native",
+  "name": "@scribeup/react-native-scribeup",
   "version": "0.0.1",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "React Native wrapper for ScribeUp SDK",
+  "main": "src/index",
+  "module": "src/index",
+  "types": "src/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "sdkVersions": {
+    "ios": "0.0.1",
+    "android": "0.0.4"
+  },
   "files": [
-    "dist/",
-    "ios/",
-    "android/"
+    "src",
+    "android",
+    "ios",
+    "*.podspec",
+    "!ios/build",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepare": "npm run build",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "prepare": "bob build",
+    "release": "release-it",
+    "example": "yarn --cwd example",
+    "bootstrap": "yarn example && yarn install"
   },
-  "dependencies": {
-    "react-native-webview": "^13.6.4"
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "scribeup",
+    "subscription"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scribeup/react-native-scribeup.git"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-native": ">=0.60.0"
+  "author": "ScribeUp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scribeup/react-native-scribeup/issues"
+  },
+  "homepage": "https://github.com/scribeup/react-native-scribeup#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-native": "^0.72.0",
-    "typescript": "^5.0.0",
-    "jest": "^29.0.0",
-    "@types/jest": "^29.0.0"
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@tsconfig/react-native": "^3.0.5",
+    "@types/jest": "^29.5.0",
+    "@types/react": "^18.0.24",
+    "@types/react-native": "^0.70.6",
+    "eslint": "^8.19.0",
+    "jest": "^29.2.1",
+    "prettier": "^2.4.1",
+    "react-native-builder-bob": "^0.20.0",
+    "typescript": "^4.8.4"
   },
-  "license": "MIT"
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "resolutions": {
+    "@types/react": "^18.0.24"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "src",
+    "targets": [
+      "typescript"
+    ]
+  }
 }
